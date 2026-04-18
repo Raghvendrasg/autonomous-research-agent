@@ -1,0 +1,16 @@
+# Environment files
+.env
+.env.example
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# IDE
+.vscode/
+
+# Private / local docs
+ARCHITECTURE.md
+INTERVIEW_GUIDE.md
