@@ -2,24 +2,27 @@ from langchain_groq import ChatGroq
 from app.models.state import ResearchState
 from app.config.settings import settings
 
+from app.core.logger import logger
+
 llm = ChatGroq(model=settings.MODEL_NAME, groq_api_key=settings.GROQ_API_KEY)
 
-def analyst_agent(state: ResearchState):
-    """Analyze search results and generate insights."""
+async def analyst_agent(state: ResearchState):
+    """Analyze ranked data and generate insights."""
     query = state["query"]
-    search_results = state["search_results"]
+    ranked_sources = state["ranked_sources"]
     
-    context = "\n\n".join(search_results)
-    prompt = f"""You are a research analyst. Based on the following search results, provide a comprehensive analysis for the query: '{query}'
+    context = "\n\n".join(ranked_sources)
+    prompt = f"""You are a senior research analyst. Based on the following prioritized research findings, provide a comprehensive, deep-dive analysis for the query: '{query}'
     
-    Search Results:
+    Ranked Findings:
     {context}
     
-    Detailed Analysis:"""
+    Provide your analysis in a professional tone, focusing on facts, emerging trends, and synthesized conclusions."""
     
-    response = llm.invoke(prompt)
+    logger.info("analyst", "Generating deep-dive analysis from ranked sources...")
+    response = await llm.ainvoke(prompt)
     
     return {
         "analysis": response.content,
-        "logs": ["Analyst agent generated research insights."]
+        "logs": ["Analyst agent synthesized research insights from prioritized findings."]
     }

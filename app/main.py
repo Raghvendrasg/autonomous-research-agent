@@ -10,6 +10,9 @@ class ResearchRequest(BaseModel):
 class ResearchResponse(BaseModel):
     query: str
     analysis: str
+    final_report: str
+    ranked_sources: list
+    confidence_score: float
     logs: list
 
 @app.post("/research", response_model=ResearchResponse)
@@ -20,9 +23,12 @@ async def perform_research(request: ResearchRequest):
             "tasks": [],
             "search_results": [],
             "extracted_data": [],
+            "ranked_sources": [],
             "analysis": "",
+            "critique": "",
             "confidence_score": 0.0,
             "final_report": "",
+            "retries": 0,
             "logs": []
         }
         
@@ -31,6 +37,9 @@ async def perform_research(request: ResearchRequest):
         return ResearchResponse(
             query=final_state["query"],
             analysis=final_state["analysis"],
+            final_report=final_state["final_report"],
+            ranked_sources=final_state["ranked_sources"],
+            confidence_score=final_state["confidence_score"],
             logs=final_state["logs"]
         )
     except Exception as e:
